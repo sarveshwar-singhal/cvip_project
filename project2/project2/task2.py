@@ -122,7 +122,7 @@ def edge_detect(img):
     convolve_y = convolve2d(img, sobel_y)
     edge_x = norm_img(convolve_x)
     edge_y = norm_img(convolve_y)
-    edge_mag =
+    edge_mag = np.empty([0, convolve_x.shape[1]], '')
     return edge_x, edge_y, edge_mag
 
 
