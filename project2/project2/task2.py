@@ -71,7 +71,7 @@ def convolve2d(img, kernel):
     # TO DO: implement your solution here
     kernel = kernel.flip()
     pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
-    conv_img = np.empty((0, pad_img.shape[1]-2), 'uint8')
+    conv_img = np.empty((0, pad_img.shape[1]-2), 'uint')
     for i in range(1, pad_img.shape[0]-1):
         row = []
         for j in range(1, pad_img.shape[1]-1):
@@ -81,7 +81,7 @@ def convolve2d(img, kernel):
             inner_prod += np.inner(sample[1], kernel[1])
             inner_prod += np.inner(sample[2], kernel[2])
             row.append(inner_prod)
-        row = np.array(row, dtype='uint8')
+        row = np.array(row, dtype='uint')
         row = row.reshape([1, row.shape[0]])
         conv_img = np.append(conv_img, row, axis=0)
     return conv_img
