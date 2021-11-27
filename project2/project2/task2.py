@@ -39,9 +39,23 @@ def filter(img):
 
     Apply 3x3 Median Filter and reduce salt-and-pepper noises in the input noise image
     """
-
     # TO DO: implement your solution here
-    raise NotImplementedError
+    denoise_img = np.empty([0,img.shape[1]], dtype='uint8')
+    # pad_top = np.array(np.zeros([1, img.shape[1]], dtype='uint8'))
+    # pad_img = np.append(pad_top, img, axis=0)   #top padding
+    # pad_img = np.append(pad_img, pad_top, axis=0)   #bottom padding
+    # pad_left = np.array(np.zeros([pad_img.shape[0],1], dtype='uint8'))
+    # pad_img = np.append(pad_left, pad_img, axis=1)  #left padding
+    # pad_img = np.append(pad_img, pad_left, axis=1)  #right padding
+    pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
+    for i in range(1, pad_img.shape[0]-1):
+        row = []
+        for j in range(1, pad_img.shape[1]-1):
+            med_filter = pad_img[i-1:i+2, j-1:j+2]
+            row.append(np.median(med_filter))
+        row = np.array(row, dtype='uint8')
+        row = row.reshape(1,row.shape[0])
+        denoise_img = np.append(denoise_img, row, axis=0)
     return denoise_img
 
 
@@ -55,7 +69,12 @@ def convolve2d(img, kernel):
     """
 
     # TO DO: implement your solution here
-    raise NotImplementedError
+    kernel = kernel.flip()
+    for i in range(1, img.shape[0]-1):
+        for j in range(1, img.shape[1]-1):
+            sample = img[i-1:i+2,j-1:j+2]
+            np.inner
+    # raise NotImplementedError
     return conv_img
 
 
@@ -74,6 +93,9 @@ def edge_detect(img):
     """
 
     # TO DO: implement your solution here
+    pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
+    convolve_x = convolve2d(pad_img, sobel_x)
+    convolve_y = convolve2d(pad_img, sobel_y)
     raise NotImplementedError
     return edge_x, edge_y, edge_mag
 
@@ -96,9 +118,11 @@ def edge_diag(img):
 
 
 if __name__ == "__main__":
-    noise_img = imread('task2.png', IMREAD_GRAYSCALE)
-    denoise_img = filter(noise_img)
-    imwrite('results/task2_denoise.jpg', denoise_img)
+    # noise_img = imread('task2.png', IMREAD_GRAYSCALE)
+    # denoise_img = filter(noise_img)
+    # imwrite('results/task2_denoise.jpg', denoise_img)
+    # exit(10)
+    denoise_img = imread('results/task2_denoise.jpg', IMREAD_GRAYSCALE)     #remove
     edge_x_img, edge_y_img, edge_mag_img = edge_detect(denoise_img)
     imwrite('results/task2_edge_x.jpg', edge_x_img)
     imwrite('results/task2_edge_y.jpg', edge_y_img)
