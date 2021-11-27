@@ -70,12 +70,37 @@ def convolve2d(img, kernel):
 
     # TO DO: implement your solution here
     kernel = kernel.flip()
-    for i in range(1, img.shape[0]-1):
-        for j in range(1, img.shape[1]-1):
-            sample = img[i-1:i+2,j-1:j+2]
-            np.inner
-    # raise NotImplementedError
+    pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
+    conv_img = np.empty((0, pad_img.shape[1]-2), 'uint8')
+    for i in range(1, pad_img.shape[0]-1):
+        row = []
+        for j in range(1, pad_img.shape[1]-1):
+            inner_prod = 0
+            sample = pad_img[i-1:i+2,j-1:j+2]
+            inner_prod += np.inner(sample[0], kernel[0])
+            inner_prod += np.inner(sample[1], kernel[1])
+            inner_prod += np.inner(sample[2], kernel[2])
+            row.append(inner_prod)
+        row = np.array(row, dtype='uint8')
+        row = row.reshape([1, row.shape[0]])
+        conv_img = np.append(conv_img, row, axis=0)
     return conv_img
+
+
+def norm_img(conv_img):
+    """ This function will normalize the intensity b/w 0-255"""
+    norm_conv_img = np.empty((0, conv_img.shape[1]), 'uint8')
+    min = conv_img.min()
+    mul = 255/ (conv_img.max() - min)
+    for i in range(conv_img.shape[0]):
+        row =[]
+        for j in range(conv_img.shape[1]):
+            norm = (conv_img[i,j] - min) * mul
+            row.append(norm)
+        row = np.array(row, dtype='uint8')
+        row = row.reshape([1, row.shape[0]])
+        norm_conv_img = np.append(norm_conv_img, row, axis=0)
+    return norm_conv_img
 
 
 def edge_detect(img):
@@ -93,10 +118,11 @@ def edge_detect(img):
     """
 
     # TO DO: implement your solution here
-    pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
-    convolve_x = convolve2d(pad_img, sobel_x)
-    convolve_y = convolve2d(pad_img, sobel_y)
-    raise NotImplementedError
+    convolve_x = convolve2d(img, sobel_x)
+    convolve_y = convolve2d(img, sobel_y)
+    edge_x = norm_img(convolve_x)
+    edge_y = norm_img(convolve_y)
+    edge_mag =
     return edge_x, edge_y, edge_mag
 
 
