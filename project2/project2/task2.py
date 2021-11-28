@@ -67,7 +67,6 @@ def convolve2d(img, kernel):
 
     Convolves a given image (or matrix) and a given kernel.
     """
-
     # TO DO: implement your solution here
     kernel = np.flip(kernel)
     pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
@@ -116,7 +115,6 @@ def edge_detect(img):
     Calculate magnitude of edges by combining edges along two orthogonal directions.
     All returned images should be normalized to [0, 255].
     """
-
     # TO DO: implement your solution here
     convolve_x = convolve2d(img, sobel_x)
     convolve_y = convolve2d(img, sobel_y)
@@ -145,7 +143,6 @@ def edge_diag(img):
     Detect diagonal edges along 45° and 135° diagonal directions using the kernels you designed.
     All returned images should be normalized to [0, 255].
     """
-
     # TO DO: implement your solution here
     raise NotImplementedError
     print() # print the two kernels you designed here
