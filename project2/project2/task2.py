@@ -144,8 +144,15 @@ def edge_diag(img):
     All returned images should be normalized to [0, 255].
     """
     # TO DO: implement your solution here
-    raise NotImplementedError
-    print() # print the two kernels you designed here
+    ker45 = np.array([[0,1,2],[-1,0,1],[-2,-1,0]])
+    ker135 = np.fliplr(ker45)
+    conv45 = convolve2d(img, ker45)
+    conv135 = convolve2d(img, ker135)
+    edge_45 = norm_img(conv45)
+    edge_135 = norm_img(conv135)
+    # raise NotImplementedError
+    print(ker45) # print the two kernels you designed here
+    print(ker135)
     return edge_45, edge_135
 
 
@@ -159,7 +166,7 @@ if __name__ == "__main__":
     imwrite('results/task2_edge_x.jpg', edge_x_img)
     imwrite('results/task2_edge_y.jpg', edge_y_img)
     imwrite('results/task2_edge_mag.jpg', edge_mag_img)
-    exit(10)    #remove
+    # exit(10)    #remove
     edge_45_img, edge_135_img = edge_diag(denoise_img)
     imwrite('results/task2_edge_diag1.jpg', edge_45_img)
     imwrite('results/task2_edge_diag2.jpg', edge_135_img)
