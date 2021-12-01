@@ -144,8 +144,10 @@ def edge_diag(img):
     All returned images should be normalized to [0, 255].
     """
     # TO DO: implement your solution here
-    ker45 = np.array([[0,1,2],[-1,0,1],[-2,-1,0]])
-    ker135 = np.fliplr(ker45)
+    # ker45 = np.array([[0,1,2],[-1,0,1],[-2,-1,0]])
+    # ker135 = np.fliplr(ker45)
+    ker45 = np.array([[0,-1,-2],[1,0,-1],[2,1,0]])
+    ker135 = np.array([[-2,-1,0],[-1,0,1],[0,1,2]])
     conv45 = convolve2d(img, ker45)
     conv135 = convolve2d(img, ker135)
     edge_45 = norm_img(conv45)
