@@ -37,7 +37,15 @@ def solution(left_img, right_img):
     """
 
     # TO DO: implement your solution here
-    raise NotImplementedError
+    left_img = cv2.cvtColor(left_img, cv2.COLOR_BGR2GRAY)
+    right_img = cv2.cvtColor(right_img, cv2.COLOR_BGR2GRAY)
+    sift = cv2.xfeatures2d.SIFT_create()
+    kp1, des1 = sift.detectAndCompute(left_img, None)
+    kp2, des2 = sift.detectAndCompute(right_img, None)
+
+    print(sift)
+    exit(10)
+    # raise NotImplementedError
     return result_img
     
 

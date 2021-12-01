@@ -36,9 +36,17 @@ def morph_erode(img):
     Apply mophology erosion on input binary image. 
     Use 3x3 squared structuring element of all 1's. 
     """
-
     # TO DO: implement your solution here
-    raise NotImplementedError
+    structuring_element = np.array([1,1,1,1,1,1,1,1,1], dtype='uint8').reshape([3,3])
+    pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
+    erode_img = np.ones(img.shape, dtype='int')
+    for i in range(1,pad_img.shape[0]-1):
+        for j in range(1,pad_img.shape[1]-1):
+            mat = pad_img[i-1:i+2, j-1:j+2]
+            if False in (structuring_element == mat):
+                erode_img[i-1][j-1] = 0
+    # imwrite('results/erode.jpg', erode_img)
+    # exit(1)
     return erode_img
 
 
@@ -52,7 +60,14 @@ def morph_dilate(img):
     """
 
     # TO DO: implement your solution here
-    raise NotImplementedError
+    filter = np.array([1,1,1,1,1,1,1,1,1], dtype='uint8').reshape([3,3])
+    pad_img = np.pad(img, (1,1), 'constant', constant_values=(0,0))
+    dilate_img = np.zeros(img.shape, dtype='int')
+    for i in range(1,pad_img.shape[0]-1):
+        for j in range(1,pad_img.shape[1]-1):
+            mat = pad_img[i-1:i+2, j-1:j+2]
+            if True in (filter == mat):
+                dilate_img[i-1][j-1] = 1
     return dilate_img
 
 
@@ -67,7 +82,8 @@ def morph_open(img):
     """
 
     # TO DO: implement your solution here
-    raise NotImplementedError
+    erode_img = morph_erode(img)
+    open_img = morph_dilate(erode_img)
     return open_img
 
 
@@ -80,9 +96,9 @@ def morph_close(img):
     Use 3x3 squared structuring element of all 1's. 
     You can use the combination of above morph_erode/dilate functions for this. 
     """
-
     # TO DO: implement your solution here
-    raise NotImplementedError
+    dilate_img = morph_dilate(img)
+    close_img = morph_erode(dilate_img)
     return close_img
 
 
@@ -97,7 +113,19 @@ def denoise(img):
     """
 
     # TO DO: implement your solution here
-    raise NotImplementedError
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            if img[i,j] == 255:
+                img[i,j] = 1
+    erode_img = morph_erode(img)
+    open_img = morph_open(erode_img)
+    dilate_img = morph_dilate(open_img)
+    close_img = morph_close(dilate_img)
+    for i in range(close_img.shape[0]):
+        for j in range(close_img.shape[1]):
+            if close_img[i,j] == 1:
+                close_img[i,j] = 255
+    denoise_img = close_img
     return denoise_img
 
 
@@ -112,7 +140,18 @@ def boundary(img):
     """
 
     # TO DO: implement your solution here
-    raise NotImplementedError
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            if img[i,j] == 255:
+                img[i,j] = 1
+    erode_img = morph_erode(img)
+    img = img-erode_img
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            if img[i,j] == 1:
+                img[i,j] = 255
+    bound_img = img
+    # raise NotImplementedError
     return bound_img
 
 
