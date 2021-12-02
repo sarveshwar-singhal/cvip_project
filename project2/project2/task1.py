@@ -64,12 +64,21 @@ def find_nearest(left_ssd, right_ssd):
     return left_d1, right_d1
 
 
-def potential_match(left_d1, right_d1):    #dictionary containing nearest matches
+def potential_match(left_d1, right_d1):    #dictionary containing nearest matches in this case 2
     potential_match = {}
     for key in left_d1.keys():
-        if right_d1[left_d1[key][0]][0] == key:
+        if right_d1[left_d1[key][0]][0] == key and right_d1[left_d1[key][1]][1] == key:
             potential_match[key] = left_d1[key]
     return potential_match
+
+
+def final_match(potential_d):   #potential_d: dictionary contains valid match
+    final_d = {}
+    for key in potential_d.keys():
+        val = potential_d[key]
+        if val[2]/val[3] < 0.7:
+            final_d[key] = potential_d[key]
+    return final_d
 
 
 def solution(left_img, right_img):
@@ -88,8 +97,10 @@ def solution(left_img, right_img):
     left_d1, right_d1 = find_nearest(left_ssd, right_ssd)
     potential_d1 = potential_match(left_d1, right_d1)
     potential_d2 = potential_match(right_d1, left_d1)
-    print(potential_d1)
-    print(potential_d2)
+    final_d1 = final_match(potential_d1)
+    final_d2 = final_match(potential_d2)
+    print(final_d1)
+    print(final_d2)
     exit(10)
     return result_img
     
