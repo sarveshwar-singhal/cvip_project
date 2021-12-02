@@ -35,6 +35,7 @@ def calc_ssd(des1, des2):
     for i in range(des1.shape[0]):
         for j in range(des2.shape[0]):
             ssd = ((des1[i]-des2[j]) ** 2).sum()
+            ssd = np.sqrt(ssd)
             left_ssd[i,j] = ssd
             right_ssd[j,i] = ssd
     return left_ssd, right_ssd
@@ -99,6 +100,43 @@ def solution(left_img, right_img):
     potential_d2 = potential_match(right_d1, left_d1)
     final_d1 = final_match(potential_d1)
     final_d2 = final_match(potential_d2)
+    prev_count = 0
+    for i in range(5000):
+        key_index = np.random.randint(len(final_d2), size=4)
+        M = np.empty([0,9])
+        key_set = set()
+        final_set = set()
+        count = 0
+        for j in range(len(key_index)):
+            key_pos = list(final_d2.keys())[key_index[j]]
+            key_set.add(key_pos)
+            x, y = kp2[key_pos].pt
+            x1, y1 = kp1[final_d2[key_pos][0]].pt
+            row = [[x, y, 1, 0, 0, 0, -x1*x, -x1*y, -x1],[0,0,0, x, y, 1, -y1*x, -y1*y, -y1]]
+            row = np.array(row)
+            M = np.append(M, row, axis=0)
+        u,s,v = np.linalg.svd(M, full_matrices=False)
+        h = v[-1].copy()
+        h = h/h[-1]
+        h = h.reshape([3,3])
+        for key in final_d2.keys():
+            if key in key_set:
+                continue
+            else:
+                x, y = kp2[key].pt
+                x1, y1 = kp1[final_d2[key][0]].pt
+                right = np.array([x,y,1]).reshape([3,1])
+                calculated = np.matmul(h, right)
+                actual = np.array([x1, y1, 1]).reshape([3,1])
+                ssd = ((calculated - actual)**2).sum()
+                ssd = np.sqrt(ssd)
+                if ssd <=5:
+                    count += 1
+        if count > prev_count:
+            prev_count = count
+            final_set = key_set.copy()
+
+
     print(final_d1)
     print(final_d2)
     exit(10)
