@@ -29,6 +29,42 @@ import random
 # random.seed(<int>) # you can use this line to set the fixed random seed if you are using random
 
 
+def calc_ssd(des1, des2):
+    left_ssd = np.zeros([des1.shape[0], des2.shape[0]])
+    right_ssd = np.zeros([des2.shape[0], des1.shape[0]])
+    for i in range(des1.shape[0]):
+        for j in range(des2.shape[0]):
+            ssd = ((des1[i]-des2[j]) ** 2).sum()
+            left_ssd[i,j] = ssd
+            right_ssd[j,i] = ssd
+    print(left_ssd, right_ssd)
+    return left_ssd, right_ssd
+
+
+def find_nearest(left_ssd, right_ssd):
+    left_d1 = {}
+    right_d1 = {}
+    for i in range(left_ssd.shape[0]):
+        row = left_ssd[i]
+        min1 = row.min()
+        min1_ind = row.argmin()
+        row[min1_ind] = np.infty()
+        min2 = row.min()
+        min2_ind = row.argmin()
+        row[min1_ind] = min1
+        left_d1[i] = [min1, min2, min1_ind, min2_ind]
+    for i in range(right_ssd.shape[0]):
+        row = right_ssd[i]
+        min1 = row.min()
+        min1_ind = row.argmin()
+        row[min1_ind] = np.infty()
+        min2 = row.min()
+        min2_ind = row.argmin()
+        row[min1_ind] = min1
+        right_d1[i] = [min1, min2, min1_ind, min2_ind]
+    return left_d1, right_d1
+
+
 def solution(left_img, right_img):
     """
     :param left_img:
@@ -42,8 +78,7 @@ def solution(left_img, right_img):
     sift = cv2.xfeatures2d.SIFT_create()
     kp1, des1 = sift.detectAndCompute(left_img, None)
     kp2, des2 = sift.detectAndCompute(right_img, None)
-
-    print(sift)
+    left_ssd, right_ssd = calc_ssd(des1, des2)
     exit(10)
     # raise NotImplementedError
     return result_img
