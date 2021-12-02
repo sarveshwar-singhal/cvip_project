@@ -37,7 +37,6 @@ def calc_ssd(des1, des2):
             ssd = ((des1[i]-des2[j]) ** 2).sum()
             left_ssd[i,j] = ssd
             right_ssd[j,i] = ssd
-    print(left_ssd, right_ssd)
     return left_ssd, right_ssd
 
 
@@ -48,21 +47,29 @@ def find_nearest(left_ssd, right_ssd):
         row = left_ssd[i]
         min1 = row.min()
         min1_ind = row.argmin()
-        row[min1_ind] = np.infty()
+        row[min1_ind] = np.infty
         min2 = row.min()
         min2_ind = row.argmin()
         row[min1_ind] = min1
-        left_d1[i] = [min1, min2, min1_ind, min2_ind]
+        left_d1[i] = [min1_ind, min2_ind, min1, min2]
     for i in range(right_ssd.shape[0]):
         row = right_ssd[i]
         min1 = row.min()
         min1_ind = row.argmin()
-        row[min1_ind] = np.infty()
+        row[min1_ind] = np.infty
         min2 = row.min()
         min2_ind = row.argmin()
         row[min1_ind] = min1
-        right_d1[i] = [min1, min2, min1_ind, min2_ind]
+        right_d1[i] = [min1_ind, min2_ind, min1, min2]
     return left_d1, right_d1
+
+
+def potential_match(left_d1, right_d1):    #dictionary containing nearest matches
+    potential_match = {}
+    for key in left_d1.keys():
+        if right_d1[left_d1[key][0]][0] == key:
+            potential_match[key] = left_d1[key]
+    return potential_match
 
 
 def solution(left_img, right_img):
@@ -71,7 +78,6 @@ def solution(left_img, right_img):
     :param right_img:
     :return: you need to return the result panorama image which is stitched by left_img and right_img
     """
-
     # TO DO: implement your solution here
     left_img = cv2.cvtColor(left_img, cv2.COLOR_BGR2GRAY)
     right_img = cv2.cvtColor(right_img, cv2.COLOR_BGR2GRAY)
@@ -79,8 +85,12 @@ def solution(left_img, right_img):
     kp1, des1 = sift.detectAndCompute(left_img, None)
     kp2, des2 = sift.detectAndCompute(right_img, None)
     left_ssd, right_ssd = calc_ssd(des1, des2)
+    left_d1, right_d1 = find_nearest(left_ssd, right_ssd)
+    potential_d1 = potential_match(left_d1, right_d1)
+    potential_d2 = potential_match(right_d1, left_d1)
+    print(potential_d1)
+    print(potential_d2)
     exit(10)
-    # raise NotImplementedError
     return result_img
     
 
