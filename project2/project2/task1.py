@@ -24,6 +24,7 @@ If you intend to use SIFT feature, make sure your OpenCV version is 3.4.2.17, se
 
 import cv2
 import numpy as np
+np.random.seed(2)
 # np.random.seed(<int>) # you can use this line to set the fixed random seed if you are using np.random
 import random
 # random.seed(<int>) # you can use this line to set the fixed random seed if you are using random
@@ -89,6 +90,8 @@ def solution(left_img, right_img):
     :return: you need to return the result panorama image which is stitched by left_img and right_img
     """
     # TO DO: implement your solution here
+    original_left = left_img.copy()
+    original_right = right_img.copy()
     left_img = cv2.cvtColor(left_img, cv2.COLOR_BGR2GRAY)
     right_img = cv2.cvtColor(right_img, cv2.COLOR_BGR2GRAY)
     sift = cv2.xfeatures2d.SIFT_create()
@@ -101,11 +104,12 @@ def solution(left_img, right_img):
     final_d1 = final_match(potential_d1)
     final_d2 = final_match(potential_d2)
     prev_count = 0
+    final_set = set()
     for i in range(5000):
         key_index = np.random.randint(len(final_d2), size=4)
         M = np.empty([0,9])
         key_set = set()
-        final_set = set()
+        temp_set = set()
         count = 0
         for j in range(len(key_index)):
             key_pos = list(final_d2.keys())[key_index[j]]
@@ -132,14 +136,36 @@ def solution(left_img, right_img):
                 ssd = np.sqrt(ssd)
                 if ssd <=5:
                     count += 1
+                    temp_set.add(key)
         if count > prev_count:
             prev_count = count
-            final_set = key_set.copy()
-
-
-    print(final_d1)
-    print(final_d2)
-    exit(10)
+            final_set = temp_set.copy()
+    final_list = list(final_set)
+    for j in range(len(final_list)):
+        x, y = kp2[final_list[j]].pt
+        x1, y1 = kp1[final_d2[final_list[j]][0]].pt
+        row = [[x, y, 1, 0, 0, 0, -x1*x, -x1*y, -x1],[0,0,0, x, y, 1, -y1*x, -y1*y, -y1]]
+        row = np.array(row)
+        M = np.append(M, row, axis=0)
+    u,s,v = np.linalg.svd(M, full_matrices=False)
+    h = v[-1].copy()
+    h = h/h[-1]
+    h = h.reshape([3,3])
+    corner = np.array([[0,0],[0,original_right.shape[1]],[original_right.shape[0],original_right.shape[1]],
+              [original_right.shape[0], 0]]).astype(float).reshape(-1,1,2)
+    offset = cv2.perspectiveTransform(corner, h).tolist()
+    x = []
+    y = []
+    for i in offset:
+        x.append(i[0][0])
+        y.append(i[0][1])
+    width = int(max(x) + min(x))
+    height = int(max(y) + min(y))
+    y_abs = int(min(y)).__abs__()
+    temp_mat = np.array([[1,0,0],[0,1,y_abs+9],[0,0,1]])
+    out = np.matmul(h, temp_mat)
+    result_img = cv2.warpPerspective(original_right, out, (width, height))
+    result_img[y_abs+11:y_abs+11+original_left.shape[0], 0:original_left.shape[1]] = original_left
     return result_img
     
 
