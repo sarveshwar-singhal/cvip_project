@@ -15,3 +15,6 @@ task1.py: we have to stitch two image, given that we can't use any library/in-bu
 task2.py: we were given images having salt-and-pepper noise, we need to produced the denoised image using median filter. In the denoised image, we need to detect horizontal and vertical edges. Bonus task was to find out edges along 45 degree and 135 degree.
 
 task3.py: The goal of this task is to experiment with commonly used morphology in binary image processing techniques (erosion, dilation, open and close), to remove noises and extract boundary of a binary image.
+
+
+P.S. If you want to use this code, please give proper reference.
