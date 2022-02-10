@@ -1,11 +1,14 @@
 # cvip_project
 I've taken CSE 573, Computer Vision & Image Processing as part of my curriculum. As part of course work I've worked on two projects.
 
+
 Project1
 
 task1.py: In this task we've to rotate the given 3-d matrix from xyz to XYZ position and vice-versa.
 
 task2.py: We were given a chessboard and we need to find out it's corner coordinates in 2-d image.
+
+
 
 Project2
 
